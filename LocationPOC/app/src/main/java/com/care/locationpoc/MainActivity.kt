@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.care.locationpoc.data.GeofenceLog
 import com.care.locationpoc.data.LocationLog
 import com.care.locationpoc.data.LogRepository
 import com.care.locationpoc.geofence.GeofenceBroadcastReceiver
@@ -51,6 +52,7 @@ class MainActivity : ComponentActivity() {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -64,26 +66,32 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Column {
                         RowOptions(
-                            onListLocationClicked = {
-                                viewModel.loadAllLocations()
+                            onDeleteLocation = {
+                                viewModel.deleteLocations()
                             },
                             onGeofenceClicked = {
                                 viewModel.createGeofenceForHome()
-                            },
-                            onGeofenceLogs = {
-                                viewModel.loadGeofenceLogs()
                             }
                         )
 
-                        CareMap(viewModel.locations.value)
+                        CareMap(
+                            locations = viewModel.locations.value,
+                            geofenceLogs = viewModel.geofenceLogs.value
+                        )
                     }
                 }
             }
         }
+
+        viewModel.loadAllLocations()
+        viewModel.loadGeofenceLogs()
     }
 
     @Composable
-    private fun CareMap(locations: List<LocationLog>) {
+    private fun CareMap(
+        locations: List<LocationLog>,
+        geofenceLogs: List<GeofenceLog>,
+    ) {
         val home = LatLng(-19.764973, -43.8435774)
 
         val cameraPositionState = rememberCameraPositionState {
@@ -99,9 +107,20 @@ class MainActivity : ComponentActivity() {
 
             locations.forEach {
                 Marker(
-                    state = MarkerState(position = it.toLatLng()),
-                    title = "Test",
+                    state = MarkerState(
+                        position = it.toLatLng(),
+                    ),
+                    alpha = 0.54f,
+                    title = "Location",
                     snippet = "${it.provider} ${it.accuracy}"
+                )
+            }
+
+            geofenceLogs.forEach {
+                Marker(
+                    state = MarkerState(position = it.toLatLng()),
+                    title = "Geofence Event",
+                    snippet = "${it.event} ${it.timeStamp}"
                 )
             }
         }
@@ -109,9 +128,8 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun RowOptions(
-        onListLocationClicked: () -> Unit,
-        onGeofenceClicked: () -> Unit,
-        onGeofenceLogs: () -> Unit
+        onDeleteLocation: () -> Unit,
+        onGeofenceClicked: () -> Unit
     ) {
         Row(
             modifier = Modifier
@@ -136,11 +154,11 @@ class MainActivity : ComponentActivity() {
                 }
             }, text = "Stop")
 
-            Spacer(modifier = Modifier.size(8.dp))
 
-            ButtonSpaced(onClick = onListLocationClicked, text = "List Locations")
+
+            ButtonSpaced(onClick = onDeleteLocation, text = "Delete Locations")
             ButtonSpaced(onClick = onGeofenceClicked, text = "Create Geofence")
-            ButtonSpaced(onClick = onGeofenceLogs, text = "List Geofence Logs")
+
         }
     }
 

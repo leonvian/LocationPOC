@@ -16,6 +16,7 @@ class GeofenceClient(private val context: Context) {
 
     private var geofencingClient = LocationServices.getGeofencingClient(context)
 
+    @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("MissingPermission")
     fun addGeofence(geofences: List<GeofenceData>) {
         geofencingClient.addGeofences(getGeofencingRequest(geofences), createGeofencePendingIntent())

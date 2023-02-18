@@ -1,6 +1,6 @@
 package com.care.locationpoc.data
 
-import android.content.Context
+import kotlinx.coroutines.flow.Flow
 
 class LogRepository(db: AppDatabase) {
 
@@ -16,12 +16,17 @@ class LogRepository(db: AppDatabase) {
         geofenceLogDao.insert(geofenceLog)
     }
 
-    suspend fun getAllGeofenceLogs(): List<GeofenceLog> {
+     fun getAllGeofenceLogs(): Flow<List<GeofenceLog>> {
         return geofenceLogDao.getAll()
     }
 
-    suspend fun getAllLocationLogs(): List<LocationLog> {
+    fun getAllLocationLogs(): Flow<List<LocationLog>> {
         return locationLogDAO.getAll()
+    }
+
+    suspend fun deleteAllLogs() {
+        geofenceLogDao.deleteAll()
+        locationLogDAO.deleteAll()
     }
 
 }

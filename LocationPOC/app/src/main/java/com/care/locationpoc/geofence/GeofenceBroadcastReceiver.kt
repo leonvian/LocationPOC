@@ -31,14 +31,16 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
 
         val geofencingEvent = GeofencingEvent.fromIntent(intent)
 
-         if (geofencingEvent == null || geofencingEvent.hasError()) {
+        if (geofencingEvent == null || geofencingEvent.hasError()) {
             val errorMessage =
                 GeofenceStatusCodes.getStatusCodeString(geofencingEvent?.errorCode ?: 0)
             serviceScope.launch {
                 val geofenceLog = GeofenceLog(
                     geofenceKey = "Error",
                     event = errorMessage,
-                    timeStamp = nowInString()
+                    timeStamp = nowInString(),
+                    latitude = 0.0,
+                    longitude = 0.0
                 )
                 logRepository.saveGeofence(geofenceLog)
             }
@@ -63,7 +65,9 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
                 val geofenceLog = GeofenceLog(
                     geofenceKey = it.requestId,
                     event = eventName,
-                    timeStamp = nowInString()
+                    timeStamp = nowInString(),
+                    latitude = geofencingEvent.triggeringLocation?.latitude ?: 0.0,
+                    longitude = geofencingEvent.triggeringLocation?.longitude ?: 0.0
                 )
                 logRepository.saveGeofence(geofenceLog)
             }
