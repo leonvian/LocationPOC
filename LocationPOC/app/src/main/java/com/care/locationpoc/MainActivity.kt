@@ -32,11 +32,15 @@ import com.care.locationpoc.data.LocationLog
 import com.care.locationpoc.data.LogRepository
 import com.care.locationpoc.geofence.GeofenceBroadcastReceiver
 import com.care.locationpoc.geofence.GeofenceClient
+import com.care.locationpoc.jobscheduler.JobLocationScheduler
+import com.care.locationpoc.jobscheduler.LocationJobService
 import com.care.locationpoc.location_provider.LocationApplication
 import com.care.locationpoc.location_provider.LocationService
 import com.care.locationpoc.ui.theme.LocationPOCTheme
+import com.care.locationpoc.workmanager.LocationScheduler
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
@@ -71,6 +75,10 @@ class MainActivity : ComponentActivity() {
                             },
                             onGeofenceClicked = {
                                 viewModel.createGeofenceForHome()
+                            },
+                            onScheduleLocation = {
+                                //LocationScheduler.scheduleWork(applicationContext)
+                                JobLocationScheduler.startJob(applicationContext)
                             }
                         )
 
@@ -82,6 +90,18 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+
+        Log.i("[TOKEN]", "Lets see!")
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+            Log.i("[TOKEN]", "Token ${it.result} success ${it.isSuccessful} Exception ${it.exception} ")
+        }
+
+            /*.addOnCompleteListener {
+                it.exception?.printStackTrace()
+                Log.i("[TOKEN]", "Token ${it.result} success ${it.isSuccessful} Exception ${it.exception} ")
+
+            }*/
 
         viewModel.loadAllLocations()
         viewModel.loadGeofenceLogs()
@@ -129,7 +149,8 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun RowOptions(
         onDeleteLocation: () -> Unit,
-        onGeofenceClicked: () -> Unit
+        onGeofenceClicked: () -> Unit,
+        onScheduleLocation: () -> Unit,
     ) {
         Row(
             modifier = Modifier
@@ -141,24 +162,22 @@ class MainActivity : ComponentActivity() {
             }, text = "Permission")
 
             ButtonSpaced(onClick = {
-                Intent(applicationContext, LocationService::class.java).apply {
+                Intent(applicationContext, LocationJobService::class.java).apply {
                     action = LocationService.ACTION_START
                     startService(this)
                 }
             }, text = "Start")
 
             ButtonSpaced(onClick = {
-                Intent(applicationContext, LocationService::class.java).apply {
+                Intent(applicationContext, LocationJobService::class.java).apply {
                     action = LocationService.ACTION_STOP
                     startService(this)
                 }
             }, text = "Stop")
 
-
-
             ButtonSpaced(onClick = onDeleteLocation, text = "Delete Locations")
             ButtonSpaced(onClick = onGeofenceClicked, text = "Create Geofence")
-
+            ButtonSpaced(onClick = onScheduleLocation, text = "Schedule Location")
         }
     }
 

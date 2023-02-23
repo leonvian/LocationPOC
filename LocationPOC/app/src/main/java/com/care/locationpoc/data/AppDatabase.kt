@@ -1,11 +1,16 @@
 package com.care.locationpoc.data
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.AutoMigrationSpec
 
-@Database(entities = [GeofenceLog::class, LocationLog::class], version =1)
+@Database(
+    entities = [GeofenceLog::class, LocationLog::class],
+    version = 2
+)
 abstract class AppDatabase : RoomDatabase() {
 
     companion object {
@@ -15,7 +20,9 @@ abstract class AppDatabase : RoomDatabase() {
             return Room.databaseBuilder(
                 context,
                 AppDatabase::class.java, DATABASE_NAME
-            ).build()
+            )
+                .fallbackToDestructiveMigration()
+                .build()
         }
 
     }

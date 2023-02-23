@@ -39,7 +39,7 @@ class MainViewModel(
         }
     }
 
-    //-19.764973 lng: -43.8435774
+
     @RequiresApi(Build.VERSION_CODES.M)
     fun createGeofenceForHome() {
         val hourInMilis: Long = 60000 * 60

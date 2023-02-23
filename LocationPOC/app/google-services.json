@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1080981633006",
+    "project_id": "locationpoc-683dc",
+    "storage_bucket": "locationpoc-683dc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1080981633006:android:a766f3acc85b3197dd00ff",
+        "android_client_info": {
+          "package_name": "com.care.locationpoc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1080981633006-80tie5nufq3okv1sfj1at9q0708fhsf1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEvV363bOo5vnqGcQ4p0WToTY3tP-A49Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1080981633006-80tie5nufq3okv1sfj1at9q0708fhsf1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

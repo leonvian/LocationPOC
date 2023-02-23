@@ -4,8 +4,10 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.care.locationpoc.R
 import com.care.locationpoc.data.LogRepository
@@ -77,8 +79,9 @@ class LocationService : Service() {
         startForeground(NOTIFICATION_ID, notification.build())
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun stop() {
-        stopForeground(true)
+        stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
 
